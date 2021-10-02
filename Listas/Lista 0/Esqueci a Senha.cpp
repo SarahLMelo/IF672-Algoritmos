@@ -19,7 +19,6 @@ void bt(string palavras[], int pos, int n, string comando, string formado){
         if(comando[pos]=='#'){
             for(int i=0; i<10; i++){
                 char numero = i+48;
-                
                 bt(palavras, pos+1, n, comando, formado+numero);
             }
         }

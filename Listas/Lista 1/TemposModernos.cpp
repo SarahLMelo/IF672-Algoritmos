@@ -3,7 +3,7 @@
 
 using namespace std;
 
-#define cout myfile
+//#define cout myfile
 
 ofstream myfile;
 
@@ -112,51 +112,48 @@ void spin(queue *W){
     W->push(element);
 }
 
-void processor(queue *W, int N, bool flag){
+void processor(queue *W, int N){
     if(W->size==0){
         cout << "PROC -1 -1\n";
     }
-    else if(W->size==1 || flag == true){
+    else{
         W->head.next->task.processingTime-=N;
         if(W->head.next->task.processingTime<0) W->head.next->task.processingTime = 0;
         cout << "PROC " << W->head.next->task.id << " " << W->head.next->task.processingTime << "\n";
     }
-    else{
-        W->head.next->next->task.processingTime-=N;
-        if(W->head.next->next->task.processingTime<0) W->head.next->next->task.processingTime = 0;
-        cout << "PROC " << W->head.next->next->task.id << " " << W->head.next->next->task.processingTime << "\n";
-    }
 }
 
 void scheduler(queue *W, stack *O, queue *I, int N){
-    bool flag = false, someoneLeft = false;
+    bool doNotCircle = false;
 
     //Step 1
     if(W->size != 0){
-        if(W->head.next->task.processingTime<=0){
-            O->push(W->head.next->task);
+        if(W->tail->task.processingTime<=0){
+            O->push(W->tail->task);
+            /*if(W->size == 1) W->pop();
+            else{
+                node *temp = W->head.next;
+                while(temp->next!=W->tail){
+                    temp = temp->next;
+                }
+                temp->next = NULL;
+                W->size--;
+            }*/
+            for(int i=0; i<W->size-1; i++) spin(W);
             W->pop();
-            someoneLeft = true;
         }
     }
 
     //Step 2
     if(I->size!=0){
-        if((W->size==0) || someoneLeft == true){
-            W->push(I->front());
-            I->pop();
-        }
-        else {
-            ii element = W->front();
-            W->head.next->task = I->front();
-            I->pop();
-            W->push(element);
-        }
+        //if(W->size == 1) doNotCircle = true;
+        W->push(I->front());
+        I->pop();
     }
 
     //Step 3
-    processor(W, N, someoneLeft);
-    spin(W);
+    processor(W, N);
+    if(doNotCircle==false) spin(W);
 }
 
 int main(){

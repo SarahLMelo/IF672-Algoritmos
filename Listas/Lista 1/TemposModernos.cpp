@@ -130,15 +130,6 @@ void scheduler(queue *W, stack *O, queue *I, int N){
     if(W->size != 0){
         if(W->tail->task.processingTime<=0){
             O->push(W->tail->task);
-            /*if(W->size == 1) W->pop();
-            else{
-                node *temp = W->head.next;
-                while(temp->next!=W->tail){
-                    temp = temp->next;
-                }
-                temp->next = NULL;
-                W->size--;
-            }*/
             for(int i=0; i<W->size-1; i++) spin(W);
             W->pop();
         }
@@ -146,7 +137,6 @@ void scheduler(queue *W, stack *O, queue *I, int N){
 
     //Step 2
     if(I->size!=0){
-        //if(W->size == 1) doNotCircle = true;
         W->push(I->front());
         I->pop();
     }

@@ -13,7 +13,7 @@ struct ii{ //Par de inteiros
 
 struct node{
         ii task = {-1, 0};
-        node *next = NULL;
+        node *next = nullptr;
 };
 
 class queue{
@@ -51,6 +51,7 @@ class queue{
                 }
                 head.next = head.next->next;
                 size--;
+                delete erasing;
         }
 
         ii front(){

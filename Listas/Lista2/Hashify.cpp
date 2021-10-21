@@ -5,10 +5,11 @@ using namespace std;
 
 ofstream myfile;
 
-#define cout myfile
+//#define cout myfile
 
 struct node{
         int value = -1, playedTimes = 0;
+        long long int score = 0;
         string key = "EMPTY";
 };
 
@@ -33,7 +34,7 @@ class Hash{
         for(int i= 0; i<key.size(); i++){
             points += (int)key[i]*i;
         }
-        return points%size;
+        return points;
     }
     
     bool isOccupied(int index){
@@ -41,7 +42,7 @@ class Hash{
         return true;
     }
 
-    int linearProbing(int index, int value, string key){
+    int linearProbing(int index, int value, string key, long long int score, int playedTimes){
         while(isOccupied(index)){
             index++;
             if(index == size) index = 0;
@@ -49,19 +50,23 @@ class Hash{
 
         hashTable[index].key = key;
         hashTable[index].value = value;
+        hashTable[index].score = score;
+        hashTable[index].playedTimes = playedTimes;
 
         return index;
     }
 
-    void insert(int value, string key){
+    void insert(int value, string key, int playedTimes){
         increasingSize();
+        long long int score = generateIndex(key);
 
-        int index = generateIndex(key);
+        int index = score%size;
         
-        if(isOccupied(index)) index = linearProbing(index, value, key);
+        if(isOccupied(index)) index = linearProbing(index, value, key, score, playedTimes);
         else{
             hashTable[index].key = key;
             hashTable[index].value = value;
+            hashTable[index].score = score;
         }
 
         occupiedSpace++;
@@ -71,7 +76,7 @@ class Hash{
     }
 
     node *retrive(string key){
-        int index = generateIndex(key);
+        int index = generateIndex(key)%size;
         
         node *temp = &hashTable[index];
         while(key != temp->key){
@@ -88,17 +93,23 @@ class Hash{
 
     void increasingSize(){
         if(((float)occupiedSpace/(float)size) >= 0.5){
+            int oldSize = size;
             node *newHashTable = new node[(size*2)+1];
             node *temp = hashTable;
             hashTable = newHashTable;
 
-            cout << "Tamanho: " << size << " NovoTamanho: " << (size*2)+1;
-
-            for(int i=0; i<size; i++){
-                hashTable[i] = temp[i];
-            }
-
             size = (size*2)+1;
+            for(int i=0; i<oldSize; i++){
+                int index = (temp[i].score)%size;
+                if(isOccupied(index)) linearProbing(temp[i].score%size, temp[i].value, temp[i].key, temp[i].score, temp[i].playedTimes);
+                else{
+                    hashTable[index].key = temp[i].key;
+                    hashTable[index].value = temp[i].value;
+                    hashTable[index].score = temp[i].score;
+                    hashTable[index].playedTimes = temp[i].playedTimes;
+                }
+                
+            }
 
             delete [] temp;
         }
@@ -123,7 +134,7 @@ int main(){
             int value;
             cin >> key >> value;
 
-            playlist.insert(value, key);
+            playlist.insert(value, key, 0);
         }
 
         else{

@@ -1,11 +1,7 @@
 #include <iostream>
-#include <fstream>
 
 using namespace std;
 
-//#define cout myfile
-
-ofstream myfile;
 
 struct ii{ //Par de inteiros
     int id, processingTime;
@@ -148,7 +144,6 @@ void scheduler(queue *W, stack *O, queue *I, int N){
 }
 
 int main(){
-    myfile.open ("out.txt");
 
     int K; //Duração de um ciclo de processamento
     cin >> K;
@@ -179,6 +174,5 @@ int main(){
         cin>>comando;
     }
 
-    myfile.close();
     return 0;
 }

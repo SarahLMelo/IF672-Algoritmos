@@ -55,6 +55,9 @@ class Heap{
             arr[pos] ^=arr[parent];
             arr[parent] ^=arr[pos];
             arr[pos] ^=arr[parent];
+
+            pos = parent;
+            parent = pos/2;
         }
 
         return;
